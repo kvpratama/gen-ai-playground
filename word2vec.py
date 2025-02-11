@@ -89,6 +89,7 @@ class Net(nn.Module):
 
 embedding_dim = 32
 model = Net(len(vocab), embedding_dim).to("xpu")
+model.train()
 loss_fn = nn.CrossEntropyLoss().to("xpu")
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 epoch = 1000
