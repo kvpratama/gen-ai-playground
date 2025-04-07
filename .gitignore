@@ -169,3 +169,29 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+/deeplearning.ai/langchain/2. Chat with Your Data/docs
+/handson-llm/base_embedding_model
+/handson-llm/checkpoints
+/handson-llm/mlm
+/handson-llm/model/checkpoint-534
+/handson-llm/model
+/handson-llm/ner_model
+handson-llm/Phi-3-mini-4k-instruct-fp16.gguf
+/handson-llm/runs
+hf/nlp-course/5/SQuAD_it-test.json
+hf/nlp-course/5/SQuAD_it-test.json.gz
+hf/nlp-course/5/SQuAD_it-train.json
+hf/nlp-course/5/SQuAD_it-train.json.gz
+*.pth
+llm-from-scratch/ch06/accuracy-loraplot.pdf
+/llm-from-scratch/ch06/gpt2
+llm-from-scratch/ch06/loss-loraplot.pdf
+llm-from-scratch/ch06/sms_spam_collection.zip
+/llm-from-scratch/ch06/sms_spam_collection
+llm-from-scratch/ch06/test.csv
+llm-from-scratch/ch06/train.csv
+llm-from-scratch/ch06/validation.csv
+/llm-from-scratch/ch07/gpt2
+llm-from-scratch/ch07/instruction-data-with-response.json
+llm-from-scratch/ch07/instruction-data.json
+llm-from-scratch/ch07/loss-plot.pdf
