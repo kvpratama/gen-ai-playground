@@ -11,6 +11,14 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langgraph.graph import START, StateGraph
 from typing_extensions import List, TypedDict
 
+
+# Define state for application
+class State(TypedDict):
+    question: str
+    context: List[Document]
+    answer: str
+
+
 class RAG:
     def __init__(self, url):
         os.environ["GOOGLE_API_KEY"] = os.environ["GEMINI_API_KEY"]
@@ -33,6 +41,11 @@ class RAG:
         # Define prompt for question-answering
         self.prompt = hub.pull("rlm/rag-prompt")
 
+        # Build state graph for the RAG process
+        graph_builder = StateGraph(State).add_sequence([self.retrieve, self.generate])
+        graph_builder.add_edge(START, "retrieve")
+        self.graph = graph_builder.compile()
+
     def load_and_chunk_url(self, url):
         # Load and chunk contents of the website
         loader = WebBaseLoader(
@@ -51,29 +64,16 @@ class RAG:
         # Index chunks
         _ = self.vector_store.add_documents(documents=all_splits)
 
+    def retrieve(self, state: State):
+        retrieved_docs = self.vector_store.similarity_search(state["question"])
+        return {"context": retrieved_docs}
+
+    def generate(self, state: State):
+        docs_content = "\n\n".join(doc.page_content for doc in state["context"])
+        messages = self.prompt.invoke({"question": state["question"], "context": docs_content})
+        response = self.llm.invoke(messages)
+        return {"answer": response.content}
+
     def query(self, question):
-
-        # Define state for application
-        class State(TypedDict):
-            question: str
-            context: List[Document]
-            answer: str
-
-        # Define application steps
-        def retrieve(state: State):
-            retrieved_docs = self.vector_store.similarity_search(state["question"])
-            return {"context": retrieved_docs}
-
-        def generate(state: State):
-            docs_content = "\n\n".join(doc.page_content for doc in state["context"])
-            messages = self.prompt.invoke({"question": state["question"], "context": docs_content})
-            response = self.llm.invoke(messages)
-            return {"answer": response.content}
-
-        # Compile application and test
-        graph_builder = StateGraph(State).add_sequence([retrieve, generate])
-        graph_builder.add_edge(START, "retrieve")
-        graph = graph_builder.compile()
-
-        response = graph.invoke({"question": question})
+        response = self.graph.invoke({"question": question})
         return response["answer"]
