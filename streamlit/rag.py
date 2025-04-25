@@ -1,7 +1,7 @@
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_cohere import CohereEmbeddings
+# from langchain_cohere import CohereEmbeddings
 from langchain_core.vectorstores import InMemoryVectorStore
 import bs4
 from langchain import hub
@@ -32,8 +32,8 @@ class RAG:
             max_retries=2,
         )
 
-        # self.embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
-        self.embeddings = CohereEmbeddings(model="embed-english-v3.0",)
+        self.embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+        # self.embeddings = CohereEmbeddings(model="embed-english-v3.0",)
         self.vector_store = InMemoryVectorStore(self.embeddings)
 
         self.load_and_chunk_url(url)
@@ -53,6 +53,7 @@ class RAG:
             bs_kwargs=dict(
                 parse_only=bs4.SoupStrainer(
                     # class_=("post-content", "post-title", "post-header")
+                    "main",
                 )
             ),
         )
