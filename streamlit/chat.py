@@ -1,7 +1,11 @@
 import streamlit as st
 import time
+import re
 import rag
 
+def is_valid_url(url):
+    # Simple regex for URL validation
+    return re.match(r'^https?://[^\s/$.?#].[^\s]*$', url) is not None
 
 with st.form("my_form"):
    st.write("Enter a URL to chat with:")
@@ -14,11 +18,16 @@ with st.form("my_form"):
 
 print(url)
 
+
 # Reset chat history if a new URL is submitted
 if submitted:
-    st.session_state.messages = [{"role": "assistant", "content": "Let's start chatting! 👇"}]
+    if not url or not is_valid_url(url):
+        st.error("Please enter a valid URL (starting with http:// or https://).")
+    else:
+        st.session_state.messages = [{"role": "assistant", "content": f"What question do you have for {url}?"}]
 
-if url:
+
+if url and is_valid_url(url):
     # Initialize chat history
     rag_assistant = rag.RAG(url)
 
