@@ -3,6 +3,10 @@ import time
 import re
 import rag
 
+@st.cache_resource
+def get_rag_assistant(url):
+    return rag.RAG(url)
+
 def is_valid_url(url):
     # Simple regex for URL validation
     return re.match(r'^https?://[^\s/$.?#].[^\s]*$', url) is not None
@@ -12,12 +16,9 @@ with st.form("my_form"):
    url = st.text_input(
         "Enter a URL to chat with:",
         placeholder="https://streamlit.io/",
-        key="placeholder",
+        key="chat_url",
     )
    submitted = st.form_submit_button('Submit URL')
-
-print(url)
-
 
 # Reset chat history if a new URL is submitted
 if submitted:
@@ -26,25 +27,22 @@ if submitted:
     else:
         st.session_state.messages = [{"role": "assistant", "content": f"What question do you have for {url}?"}]
 
-
 if url and is_valid_url(url):
-    # Initialize chat history
-    rag_assistant = rag.RAG(url)
-
+    rag_assistant = get_rag_assistant(url)
+    
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
     # Accept user input
-    if prompt := st.chat_input("What is up?"):
+    if prompt := st.chat_input("Ask a question about the website"):
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
         # Display user message in chat message container
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        print(prompt)
         assistant_response = rag_assistant.query(prompt)
 
         # Display assistant response in chat message container
