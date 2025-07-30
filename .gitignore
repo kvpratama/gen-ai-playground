@@ -203,3 +203,6 @@ llm-from-scratch/ch07/loss-plot.pdf
 /hf/agents-course/3/docs
 hf/mcp-course/.python-version
 hf/mcp-course/uv.lock
+langchain/customer-support/travel2.sqlite
+langchain/customer-support/travel2.backup.sqlite
+langchain/customer-support/swiss_faq.md
